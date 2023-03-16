@@ -17,13 +17,13 @@ import net.minecraft.world.server.ServerWorld;
 
 public class SacredSapling extends SaplingBlock {
     public static final IntegerProperty STAGE = BlockStateProperties.STAGE;
-    private BlockState log;
-    private BlockState wood;
-    private BlockState leaves;
+    protected BlockState log;
+    protected BlockState wood;
+    protected BlockState leaves;
     enum Type{
         MEGA,MASSIVE,SACRED_SPRING
     }
-    private Type type;
+    protected Type type;
     public SacredSapling(BlockState log, BlockState wood, BlockState leaves, Properties properties, Type type) {
         super(new OakTree(), properties);
         this.log=log;
@@ -62,13 +62,13 @@ public class SacredSapling extends SaplingBlock {
             if (!net.minecraftforge.event.ForgeEventFactory.saplingGrowTree(world, random, pos)) return;
             switch (type) {
                 case SACRED_SPRING:
-                    TreeTypes.generateSacredSpringRubberTree(log, wood, leaves, world, random, pos);
+                    TreeTypes.generateSacredSpringRubberTree(new MassiveTreeGenerator(log, wood, leaves), world, random, pos);
                     break;
                 case MEGA:
-                    TreeTypes.generateMegaRubberTree(log, wood, leaves, world, random, pos, dynamicShape);
+                    TreeTypes.generateMegaRubberTree(new MassiveTreeGenerator(log, wood, leaves), world, random, pos, dynamicShape);
                     break;
                 case MASSIVE:
-                    TreeTypes.generateMassiveRubberTree(log, wood, leaves, world, random, pos);
+                    TreeTypes.generateMassiveRubberTree(new MassiveTreeGenerator(log, wood, leaves), world, random, pos);
                     break;
                 default:
                     break;

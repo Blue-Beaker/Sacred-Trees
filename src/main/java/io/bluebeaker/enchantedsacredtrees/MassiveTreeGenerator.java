@@ -4,15 +4,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SaplingBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.SectionPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.feature.TreeFeature;
+import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.ArrayList;
@@ -24,11 +25,23 @@ public class MassiveTreeGenerator {
 		this.log=log;
 		this.wood=wood;
 	}
+	public MassiveTreeGenerator(BlockState log, BlockState wood, BlockState leaves, BlockState lights, BlockState vines,BlockState vines2) {
+		this.leaves=leaves;
+		this.log=log;
+		this.wood=wood;
+		this.lights=lights;
+		this.vines=vines;
+		this.vines2=vines2;
+		this.genLightsAndVines=true;
+	}
 	// Parametric blockstates to use
 	public BlockState leaves;
 	public BlockState log;
 	public BlockState wood;
-
+	public BlockState lights = null;
+	public BlockState vines = null;
+	public BlockState vines2 = null;
+	public boolean genLightsAndVines = false;
 	/**
 	 * Contains three sets of two values that provide complimentary indices for a given 'major' index - 1 and 2 for 0, 0
 	 * and 2 for 1, and 0 and 1 for 2.
@@ -155,7 +168,13 @@ public class MassiveTreeGenerator {
 		leafNodes = var2;
 		leafNodesLength = var4;
 	}
-
+	private void genVines(World world, int x, int y, int z, int length){
+		for(int i=1;i<length;i++){
+			this.setBlockAndNotifyAdequately(world, x, y-i, z, vines);
+		}
+		if(vines2!=null)
+		this.setBlockAndNotifyAdequately(world, x, y-length, z, vines2);
+	}
 	private void genLeafLayer(int x, int y, int z, final int size) {
 
 		int t;
@@ -179,10 +198,17 @@ public class MassiveTreeGenerator {
 						BlockPos placementPos = placement.set(x, y, z);
 						BlockState state = world.getBlockState(placementPos);
 						Block block = state.getBlock();
-						if (safeGrowth ? (block.isAir(state, world, placementPos) ||
-								block.canBeReplacedByLeaves(state, world, placementPos)) :
+						BlockState blockToSet = leaves;
+						if (this.genLightsAndVines){
+							float randFloat = rand.nextFloat();
+							if(randFloat<0.03f && world.getBlockState(placementPos.below()).getMaterial() == Material.AIR){
+								if(this.lights!=null && randFloat<0.02f) blockToSet=lights;
+								else if(this.vines!=null) this.genVines(world, x, y, z, rand.nextInt(this.height/3));
+							}
+						}
+						if (safeGrowth ? (block.canBeReplacedByLeaves(state, world, placementPos)) :
 								block != Blocks.BEDROCK) {
-									this.setBlockAndNotifyAdequately(world, x, y, z, leaves);
+									this.setBlockAndNotifyAdequately(world, x, y, z, blockToSet);
 								}
 						if (t == 1) break;
 						t = 1;
@@ -281,6 +307,7 @@ public class MassiveTreeGenerator {
 
 		double lim = 400f / trunkSize;
 
+		world.getChunk(base).setBlockState(base, Blocks.AIR.defaultBlockState(), false);
 		for (int i = -trunkSize; i <= trunkSize; i++) {
 			bottomPoint[0] = x + i;
 			topPoint[0] = x + i;
@@ -296,8 +323,8 @@ public class MassiveTreeGenerator {
 					this.placeBlockLine(bottomPoint, topPoint, log, wood);
 					this.setBlockAndNotifyAdequately(world, topPoint[0], topPoint[1], topPoint[2],
 							wood);
-					BlockPos placementPos = placement.set(bottomPoint[0], bottomPoint[1] - 1, bottomPoint[2]);
-					BlockState state = world.getBlockState(placementPos);
+					// BlockPos placementPos = placement.set(bottomPoint[0], bottomPoint[1] - 1, bottomPoint[2]);
+					// BlockState state = world.getBlockState(placementPos);
 					// state.getBlock().onPlantGrow(state, world, placementPos, base);
 				}
 			}
@@ -407,7 +434,7 @@ public class MassiveTreeGenerator {
 		BlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
 
-		if (!block.canSustainPlant(state, world, pos, Direction.UP, (SaplingBlock)SaplingBlocks.OAK.SACRED))
+		if (!block.canSustainPlant(state, world, pos, Direction.UP, (SaplingBlock)world.getBlockState(placement.set(basePos[0],basePos[1],basePos[2])).getBlock()))
 			return false;
 		else {
 			int[] var5 = new int[] { basePos[0], basePos[1], basePos[2] };
@@ -532,31 +559,32 @@ public class MassiveTreeGenerator {
 		else {
 			this.setup();
 			time = System.nanoTime() - time;
-			log("Verified spawn position of massive rubber tree in: " + time + "ns");
+			logDebug("Verified spawn position of massive rubber tree in: " + time + "ns");
 			long time2 = time = System.nanoTime();
 			this.generateLeafNodeList();
 			long nodes = System.nanoTime();
-			log("Generated nodes in: " + (nodes-time2) + "ns");
+			logDebug("Generated nodes in: " + (nodes-time2) + "ns");
 			this.generateLeaves();
 			long leaves = System.nanoTime();
-			log("Generated leaves in: " + (leaves-nodes) + "ns");
+			logDebug("Generated leaves in: " + (leaves-nodes) + "ns");
 			this.generateLeafNodeBases();
 			long bases = System.nanoTime();
-			log("Generated bases in: " + (bases-leaves) + "ns");
+			logDebug("Generated bases in: " + (bases-leaves) + "ns");
 			this.generateTrunk(pos);
 			long trunk = System.nanoTime();
 			time = System.nanoTime() - time;
-			log("Generated massive rubber tree in: " + time + "ns");
+			logDebug("Generated massive rubber tree in: " + time + "ns");
 			trunk -= bases; bases -= leaves; leaves -= nodes; nodes -= time2;
-			log(String.format("%s for trunk, %s for leaf nodes, %s for leaves, %s for branches", trunk, nodes, leaves, bases));
-			log("\tTree contains " + blocksAdded + " Blocks");
-			// time = System.nanoTime();
+			logDebug(String.format("%s for trunk, %s for leaf nodes, %s for leaves, %s for branches", trunk, nodes, leaves, bases));
+			logDebug("\tTree contains " + blocksAdded + " Blocks");
+			time = System.nanoTime();
+			this.updateChunks();
 			// for (TLongObjectIterator<Chunk> iter = chunkMap.iterator(); iter.hasNext();) {
 			// 	iter.advance();
 			// 	MineFactoryReloadedCore.proxy.relightChunk(iter.value());
 			// }
-			//time = System.nanoTime() - time;
-			//log("Lit massive rubber tree in: " + time + "ns");
+			time = System.nanoTime() - time;
+			logDebug("Lit massive rubber tree in: " + time + "ns");
 			return true;
 		}
 	}
@@ -567,21 +595,27 @@ public class MassiveTreeGenerator {
 	private long lastTime = 0;
 	// private TLongObjectHashMap<Chunk> chunkMap;
 	private BlockPos.Mutable placement = new BlockPos.Mutable();
+	private ArrayList<SectionPos> sectionsToUpdate = new ArrayList<SectionPos>();
+	private ArrayList<Chunk> chunksToUpdate = new ArrayList<Chunk>();
 
 	public void setBlockAndNotifyAdequately(World world, int x, int y, int z, BlockState state) {
 		// placeLog(world, rand, placement, this.blockPosSet, this.bounds, this.config);
 		// if ((y < 0) || y > 255)
 		// 	return;
 		BlockPos pos = new BlockPos(x,y,z);
+		if(safeGrowth && !world.getBlockState(pos).canBeReplacedByLogs(world, pos)) return;
 		// world.setBlock(pos, state, 19);
 		Chunk chunk = world.getChunkAt(pos);
 		chunk.setBlockState(pos, state, false);
 		((ServerWorld)world).getChunkSource().blockChanged(pos);
+		if(!chunksToUpdate.contains(chunk)) chunksToUpdate.add(chunk);
+		// SectionPos section = SectionPos.of(pos);
+		// if(!sectionsToUpdate.contains(section)) sectionsToUpdate.add(section);
 		// world.setBlock(pos, state, 144);
 		++blocksAdded;
-		if(blocksAdded%5000==0){
+		if(blocksAdded%500000==0){
 			long timeMillis = System.currentTimeMillis();
-			log("Added 5000 Blocks in "+(timeMillis-lastTime)+"ms, "+blocksAdded+" blocks in "+ (timeMillis-startTime)+"ms in total");
+			logDebug("Added 500k Blocks in "+(timeMillis-lastTime)+"ms, "+blocksAdded/1000+"k blocks/"+ (timeMillis-startTime)+"ms total");
 			lastTime=timeMillis;
 		}
 		// long pos = ((x & 0xFFFFFFF0L) << 32) | (z & 0xFFFFFFF0L);
@@ -607,8 +641,22 @@ public class MassiveTreeGenerator {
 		// subChunk.set(x, y, z, state);
 		// subChunk.setBlockLight(x, y, z, 0);
 	}
+	public void updateChunks(){
+		// for(SectionPos section : sectionsToUpdate){
+		// 	world.getLightEngine().updateSectionStatus(section,true);
+		// 	logDebug("Updating lighting in section "+section.getX()+","+section.getY()+","+section.getZ());
+		// }
+		WorldLightManager wlm = world.getLightEngine();
+		for (Chunk chunk: chunksToUpdate){
+			chunk.setLightCorrect(false);
+			for (int i=0;i<chunk.getSections().length;i++){
+				wlm.updateSectionStatus(SectionPos.of(chunk.getPos(),i), true);
+				// logDebug("Updating lighting in section "+chunk.getPos().x+","+i+","+chunk.getPos().z);
+			}
+		}
+	}
 	public static boolean debug = true;
-	private void log(String message){
+	private void logDebug(String message){
 		if (debug)logger.info(message);
 	}
 }

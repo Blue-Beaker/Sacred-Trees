@@ -1,4 +1,5 @@
 {
+    "itemGroup.sacred_trees":"神圣巨树",
     "block.sacred_trees.sacred_oak_sapling": "神圣橡树树苗",
     "block.sacred_trees.sacred_birch_sapling": "神圣白桦树苗",
     "block.sacred_trees.sacred_spruce_sapling": "神圣云杉树苗",
@@ -16,5 +17,11 @@
     "block.sacred_trees.massive_spruce_sapling": "神圣云杉树苗",
     "block.sacred_trees.massive_jungle_sapling": "神圣丛林树苗",
     "block.sacred_trees.massive_acacia_sapling": "神圣金合欢树苗",
-    "block.sacred_trees.massive_dark_oak_sapling": "神圣深色橡树树苗"
+    "block.sacred_trees.massive_dark_oak_sapling": "神圣深色橡树树苗",
+    "block.sacred_trees.sacred_crimson_fungus": "神圣绯红菌",
+    "block.sacred_trees.sacred_warped_fungus": "神圣诡异菌",
+    "block.sacred_trees.mega_crimson_fungus": "宏伟绯红菌",
+    "block.sacred_trees.mega_warped_fungus": "宏伟诡异菌",
+    "block.sacred_trees.massive_crimson_fungus": "神圣绯红菌",
+    "block.sacred_trees.massive_warped_fungus": "神圣诡异菌"
 }
