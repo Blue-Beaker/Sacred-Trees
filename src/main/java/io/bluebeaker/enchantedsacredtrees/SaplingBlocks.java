@@ -38,13 +38,13 @@ public class SaplingBlocks {
     private static SaplingVariant registerSaplingTypes(String basename, Block log, Block wood, Block leaves){
         return new SaplingVariant(
         registerBlock("sacred_"+basename, new SacredSapling(log,wood,leaves, 
-        AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS),
+        AbstractBlock.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS),
         SacredSapling.Type.SACRED_SPRING),false,Rarity.RARE),
         registerBlock("mega_"+basename, new SacredSapling(log,wood,leaves, 
-        AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS),
+        AbstractBlock.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS),
         SacredSapling.Type.MEGA),false,Rarity.UNCOMMON),
         registerBlock("massive_"+basename, new SacredSapling(log,wood,leaves, 
-        AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS),
+        AbstractBlock.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS),
         SacredSapling.Type.MASSIVE),true,Rarity.EPIC));
     }
     private static SaplingVariant registerFungusTypes(String basename, Block log, Block wood, Block leaves, Block lights, Block vines, Block vines2){
