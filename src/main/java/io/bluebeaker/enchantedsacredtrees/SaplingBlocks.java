@@ -7,6 +7,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.Rarity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -34,26 +35,23 @@ public class SaplingBlocks {
         return new SaplingVariant(
         registerBlock("sacred_"+basename, new SacredSapling(log,wood,leaves, 
         AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS),
-        SacredSapling.Type.SACRED_SPRING)),
+        SacredSapling.Type.SACRED_SPRING),false,Rarity.RARE),
         registerBlock("mega_"+basename, new SacredSapling(log,wood,leaves, 
         AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS),
-        SacredSapling.Type.MEGA)),
-        registerFoiledBlock("massive_"+basename, new SacredSapling(log,wood,leaves, 
+        SacredSapling.Type.MEGA),false,Rarity.UNCOMMON),
+        registerBlock("massive_"+basename, new SacredSapling(log,wood,leaves, 
         AbstractBlock.Properties.of(Material.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS),
-        SacredSapling.Type.MASSIVE)));
+        SacredSapling.Type.MASSIVE),true,Rarity.EPIC));
     }
-    public static Block registerBlock(String name,Block block)
-    {
-        BlockItem itemBlock = new BlockItem(block, new Item.Properties().tab(ItemGroupSacredSaplings.instance));
-        block.setRegistryName(name);
-        itemBlock.setRegistryName(name);
-        ForgeRegistries.BLOCKS.register(block);
-        ForgeRegistries.ITEMS.register(itemBlock);
-        return block;
-    }
-    public static Block registerFoiledBlock(String name,Block block)
-    {
-        BlockItem itemBlock = new FoiledBlockItem(block, new Item.Properties().tab(ItemGroupSacredSaplings.instance));
+    public static Block registerBlock(String name,Block block,Boolean foiled,Rarity rarity)
+    {   
+        BlockItem itemBlock;
+        if(foiled){
+            itemBlock = new FoiledBlockItem(block, new Item.Properties().tab(ItemGroupSacredSaplings.instance).rarity(rarity));
+        }
+        else{
+            itemBlock = new BlockItem(block, new Item.Properties().tab(ItemGroupSacredSaplings.instance).rarity(rarity));
+        }
         block.setRegistryName(name);
         itemBlock.setRegistryName(name);
         ForgeRegistries.BLOCKS.register(block);
