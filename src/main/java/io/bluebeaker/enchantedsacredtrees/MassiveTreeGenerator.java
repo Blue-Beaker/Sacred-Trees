@@ -170,9 +170,10 @@ public class MassiveTreeGenerator {
 	}
 	private void genVines(World world, int x, int y, int z, int length){
 		for(int i=1;i<length;i++){
+			if(world.getBlockState(new BlockPos(x,y-i,z)).getMaterial() != Material.AIR) return;
 			this.setBlockAndNotifyAdequately(world, x, y-i, z, vines);
 		}
-		if(vines2!=null)
+		if(vines2!=null && world.getBlockState(new BlockPos(x,y-length,z)).getMaterial() == Material.AIR)
 		this.setBlockAndNotifyAdequately(world, x, y-length, z, vines2);
 	}
 	private void genLeafLayer(int x, int y, int z, final int size) {
