@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.feature.TreeFeature;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -531,31 +532,31 @@ public class MassiveTreeGenerator {
 		else {
 			this.setup();
 			time = System.nanoTime() - time;
-			logger.info("Verified spawn position of massive rubber tree in: " + time + "ns");
+			log("Verified spawn position of massive rubber tree in: " + time + "ns");
 			long time2 = time = System.nanoTime();
 			this.generateLeafNodeList();
 			long nodes = System.nanoTime();
-			logger.info("Generated nodes in: " + (nodes-time2) + "ns");
+			log("Generated nodes in: " + (nodes-time2) + "ns");
 			this.generateLeaves();
 			long leaves = System.nanoTime();
-			logger.info("Generated leaves in: " + (leaves-nodes) + "ns");
+			log("Generated leaves in: " + (leaves-nodes) + "ns");
 			this.generateLeafNodeBases();
 			long bases = System.nanoTime();
-			logger.info("Generated bases in: " + (bases-leaves) + "ns");
+			log("Generated bases in: " + (bases-leaves) + "ns");
 			this.generateTrunk(pos);
 			long trunk = System.nanoTime();
 			time = System.nanoTime() - time;
-			logger.info("Generated massive rubber tree in: " + time + "ns");
+			log("Generated massive rubber tree in: " + time + "ns");
 			trunk -= bases; bases -= leaves; leaves -= nodes; nodes -= time2;
-			logger.info(String.format("%s for trunk, %s for leaf nodes, %s for leaves, %s for branches", trunk, nodes, leaves, bases));
-			logger.info("\tTree contains " + blocksAdded + " Blocks");
+			log(String.format("%s for trunk, %s for leaf nodes, %s for leaves, %s for branches", trunk, nodes, leaves, bases));
+			log("\tTree contains " + blocksAdded + " Blocks");
 			// time = System.nanoTime();
 			// for (TLongObjectIterator<Chunk> iter = chunkMap.iterator(); iter.hasNext();) {
 			// 	iter.advance();
 			// 	MineFactoryReloadedCore.proxy.relightChunk(iter.value());
 			// }
 			//time = System.nanoTime() - time;
-			//logger.info("Lit massive rubber tree in: " + time + "ns");
+			//log("Lit massive rubber tree in: " + time + "ns");
 			return true;
 		}
 	}
@@ -564,7 +565,6 @@ public class MassiveTreeGenerator {
 	private int blocksAdded = 0;
 	private long startTime = 0;
 	private long lastTime = 0;
-	private ArrayList<IChunk> chunksToUpdate = new ArrayList<IChunk>();
 	// private TLongObjectHashMap<Chunk> chunkMap;
 	private BlockPos.Mutable placement = new BlockPos.Mutable();
 
@@ -573,14 +573,15 @@ public class MassiveTreeGenerator {
 		// if ((y < 0) || y > 255)
 		// 	return;
 		BlockPos pos = new BlockPos(x,y,z);
-		world.setBlock(pos, state, 19);
-
-		if(!chunksToUpdate.contains(world.getChunk(pos))) chunksToUpdate.add(world.getChunk(pos));
-
+		// world.setBlock(pos, state, 19);
+		Chunk chunk = world.getChunkAt(pos);
+		chunk.setBlockState(pos, state, false);
+		((ServerWorld)world).getChunkSource().blockChanged(pos);
+		// world.setBlock(pos, state, 144);
 		++blocksAdded;
 		if(blocksAdded%5000==0){
 			long timeMillis = System.currentTimeMillis();
-			logger.info("Added 5000 Blocks in "+(timeMillis-lastTime)+"ms, "+blocksAdded+" blocks in "+ (timeMillis-startTime)+"ms in total");
+			log("Added 5000 Blocks in "+(timeMillis-lastTime)+"ms, "+blocksAdded+" blocks in "+ (timeMillis-startTime)+"ms in total");
 			lastTime=timeMillis;
 		}
 		// long pos = ((x & 0xFFFFFFF0L) << 32) | (z & 0xFFFFFFF0L);
@@ -606,9 +607,8 @@ public class MassiveTreeGenerator {
 		// subChunk.set(x, y, z, state);
 		// subChunk.setBlockLight(x, y, z, 0);
 	}
-	public void updateChunks(){
-		for(IChunk chunk : chunksToUpdate){
-			
-		}
+	public static boolean debug = true;
+	private void log(String message){
+		if (debug)logger.info(message);
 	}
 }
