@@ -540,7 +540,7 @@ public class MassiveTreeGenerator {
 
 	public boolean generate(World world, Random par2Random, BlockPos pos) {
 
-		long time = System.nanoTime();
+		long time = System.currentTimeMillis();
 		startTime = System.currentTimeMillis();
 		this.world = world;
 		long var6 = par2Random.nextLong();
@@ -563,6 +563,7 @@ public class MassiveTreeGenerator {
 			this.generateLeafNodeList();
 			long nodes = System.currentTimeMillis();
 			logDebug("Generated nodes in: " + (nodes-time2) + "ms");
+			lastTime = System.currentTimeMillis();
 			this.generateLeaves();
 			long leaves = System.currentTimeMillis();
 			logDebug("Generated leaves in: " + (leaves-nodes) + "ms");
@@ -612,9 +613,9 @@ public class MassiveTreeGenerator {
 		// if(!sectionsToUpdate.contains(section)) sectionsToUpdate.add(section);
 		// world.setBlock(pos, state, 144);
 		++blocksAdded;
-		if(blocksAdded%500000==0){
+		if(blocksAdded%1000000==0){
 			long timeMillis = System.currentTimeMillis();
-			logDebug("Added 500k Blocks in "+(timeMillis-lastTime)+"ms, "+blocksAdded/1000+"k blocks/"+ (timeMillis-startTime)+"ms total");
+			logDebug("Added 1M Blocks in "+(timeMillis-lastTime)+"ms, "+blocksAdded/1000000+"M blocks/"+ (timeMillis-startTime)+"ms total");
 			lastTime=timeMillis;
 		}
 		// long pos = ((x & 0xFFFFFFF0L) << 32) | (z & 0xFFFFFFF0L);
