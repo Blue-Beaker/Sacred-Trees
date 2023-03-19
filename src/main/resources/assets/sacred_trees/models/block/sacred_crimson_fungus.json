@@ -1,3 +1,4 @@
 {
-    "parent":"minecraft:block/crimson_fungus"
+    "parent":"minecraft:block/crimson_fungus",
+    "render_type": "cutout"
 }

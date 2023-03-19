@@ -1,6 +1,8 @@
 package io.bluebeaker.enchantedsacredtrees;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -11,6 +13,10 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,6 +49,20 @@ public class SacredTreesMod
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
+        ArrayList<SaplingBlocks.SaplingVariant> saplingList = new ArrayList<SaplingBlocks.SaplingVariant>();
+        saplingList.add(SaplingBlocks.OAK);
+        saplingList.add(SaplingBlocks.BIRCH);
+        saplingList.add(SaplingBlocks.SPRUCE);
+        saplingList.add(SaplingBlocks.JUNGLE);
+        saplingList.add(SaplingBlocks.ACACIA);
+        saplingList.add(SaplingBlocks.DARK_OAK);
+        saplingList.add(SaplingBlocks.CRIMSON);
+        saplingList.add(SaplingBlocks.WARPED);
+        for (SaplingBlocks.SaplingVariant sapling: saplingList){
+            RenderTypeLookup.setRenderLayer(sapling.MASSIVE,RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(sapling.MEGA,RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(sapling.SACRED,RenderType.cutout());
+        }
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event)

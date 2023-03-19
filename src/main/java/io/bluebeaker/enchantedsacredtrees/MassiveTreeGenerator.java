@@ -595,7 +595,7 @@ public class MassiveTreeGenerator {
 	private long lastTime = 0;
 	// private TLongObjectHashMap<Chunk> chunkMap;
 	private BlockPos.Mutable placement = new BlockPos.Mutable();
-	private ArrayList<SectionPos> sectionsToUpdate = new ArrayList<SectionPos>();
+	// private ArrayList<SectionPos> sectionsToUpdate = new ArrayList<SectionPos>();
 	private ArrayList<Chunk> chunksToUpdate = new ArrayList<Chunk>();
 
 	public void setBlockAndNotifyAdequately(World world, int x, int y, int z, BlockState state) {

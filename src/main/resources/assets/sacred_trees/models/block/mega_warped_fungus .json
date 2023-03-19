@@ -1,3 +1,4 @@
 {
-    "parent":"minecraft:block/warped_fungus"
+    "parent":"minecraft:block/warped_fungus",
+    "render_type": "cutout"
 }
