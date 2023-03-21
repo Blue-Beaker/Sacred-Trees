@@ -29,7 +29,7 @@ displayName="Sacred Trees" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="banner.png" #optional
 # A text field displayed in the mod UI
-credits="Thanks Minefactory Reloaded for the original Sacred Rubber Tree" #optional
+credits="Thanks original developers of Minefactory Reloaded, for the original Sacred Rubber Tree" #optional
 # A text field displayed in the mod UI
 authors="Blue_Beaker" #optional
 # The description text for the mod (multi line!) (#mandatory)
