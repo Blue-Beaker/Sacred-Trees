@@ -27,7 +27,7 @@ displayName="Sacred Trees" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="icon.png" #optional
+logoFile="banner.png" #optional
 # A text field displayed in the mod UI
 credits="Thanks Minefactory Reloaded for the original Sacred Rubber Tree" #optional
 # A text field displayed in the mod UI
@@ -35,6 +35,7 @@ authors="Blue_Beaker" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 Brings the Sacred Rubber Tree from Minefactory Reloaded back!
+Adds Mega, Sacred and Enchanted Sacred saplings for every vanilla trees, including fungus.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.examplemod]] #optional
